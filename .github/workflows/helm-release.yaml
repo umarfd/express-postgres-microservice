@@ -31,7 +31,7 @@ jobs:
         run: |
           mkdir -p ./release-artifacts
           mv ./packaged-chart/*.tgz ./release-artifacts/
-          helm repo index ./release-artifacts --url https://github.com/umar.fd/express-postgres-chart/releases/download/v0.1.0/
+          helm repo index ./release-artifacts --url https://github.com/umarfd/express-postgres-chart/releases/download/v0.1.0/
 
       - name: Upload Helm Release Artifacts
         uses: actions/upload-artifact@v3
