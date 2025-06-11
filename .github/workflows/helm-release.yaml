@@ -1,4 +1,4 @@
-name: Helm Release
+name: Docker Build and Push
 
 on:
   push:
@@ -6,35 +6,38 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  release:
+  build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
         with:
-          version: 'v3.11.0'
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add Bitnami Helm repository
-        run: helm repo add bitnami https://charts.bitnami.com/bitnami
-
-      - name: Run Helm Lint
-        run: helm lint ./express-postgres
-
-      - name: Package Helm Chart
-        run: helm package ./express-postgres -d ./packaged-chart
-
-      - name: Create Helm Release
-        run: |
-          mkdir -p ./release-artifacts
-          mv ./packaged-chart/*.tgz ./release-artifacts/
-          helm repo index ./release-artifacts --url https://github.com/umarfd/express-postgres-chart/releases/download/v0.1.0/
-
-      - name: Upload Helm Release Artifacts
-        uses: actions/upload-artifact@v3
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          name: helm-release
-          path: ./release-artifacts
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
