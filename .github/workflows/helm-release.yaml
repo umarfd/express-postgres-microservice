@@ -65,7 +65,7 @@ jobs:
 
       - name: Deploy to k3s with Helm
         run: |
-          helm repo add pinus-academy https://umarfd.github.io/express-postgres-chart/
+          helm repo add umarfd https://umarfd.github.io/express-postgres-chart/
           helm repo update
           helm upgrade --install express-postgres-microservice umarfd/app \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
