@@ -70,4 +70,5 @@ jobs:
           helm upgrade --install express-postgres-microservice umarfd/express-postgres \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ github.sha }} \
+            --create-namespace \
             --namespace dev \
