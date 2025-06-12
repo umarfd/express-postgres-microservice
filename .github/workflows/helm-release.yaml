@@ -60,7 +60,7 @@ jobs:
       - name: Setup kubeconfig
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+          printf "%s" "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
           chmod 600 ~/.kube/config
 
       - name: Deploy to k3s with Helm
