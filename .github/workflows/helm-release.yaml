@@ -67,7 +67,7 @@ jobs:
         run: |
           helm repo add pinus-academy https://umarfd.github.io/express-postgres-chart/
           helm repo update
-          helm upgrade --install crm pinus-academy/app \
+          helm upgrade --install express-postgres-microservice umarfd/app \
             --set image.repository=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
             --set image.tag=${{ github.sha }} \
             --namespace dev \
